@@ -315,12 +315,8 @@ public class QueryBuilder {
                 );
     }
 
-    /**
-     * See ES documentation for function_score.
-     * @param functions
-     * @return
-     */
     public static JsonObject functionScoreQuery(JsonObject query, String scoreMode, JsonObject...functions) {
+        //See ES documentation for function_score.
         JsonArray fs = array();
         for(JsonObject f: functions) {
             fs.add(f);
@@ -355,14 +351,6 @@ public class QueryBuilder {
                 decayFunction("exp", field, DateMath.now(), scale));
     }
 
-    /**
-     * Use together with function_score. Use for e.g. distance or date ranking.
-     * @param decayFunction
-     * @param field
-     * @param point
-     * @param scale
-     * @return
-     */
     public static JsonObject decayFunction(String decayFunction, String field, double[] point, String scale) {
         return decayFunction(decayFunction, field, point[1] + "," + point[0], scale);
     }
@@ -544,19 +532,19 @@ public class QueryBuilder {
 
 
     /**
-     * @param field
-     * @param value
+     * @param field field
+     * @param value value
      * @param slop allows tokens to be separated by slop amount of tokens
      * @param fuzziness set to a number to allow levenstein edit distance (in number of characters) or set to AUTO to have it adapt on the token length.
-     * @return
+     * @return query
      */
     public static JsonObject matchPhrase(String field, String value, int slop, int fuzziness) {
         return matchPhrase(field, value, slop, "" + fuzziness);
     }
 
     /**
-     * @param field field
-     * @param value value
+     * @param field field field
+     * @param value value value
      * @param slop allows tokens to be separated by slop amount of tokens
      * @param fuzziness set to a number to allow levenstein edit distance (in number of characters) or set to AUTO to have it adapt on the token length.
      * @return the query
