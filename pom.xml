@@ -241,7 +241,53 @@
           <groupId>io.inbot</groupId>
           <artifactId>inbot-es-launcher</artifactId>
           <version>1.0</version>
+          <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jillesvangurp</groupId>
+            <artifactId>jsonj</artifactId>
+            <version>2.21</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jillesvangurp</groupId>
+            <artifactId>urlbuilder</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.inbot</groupId>
+            <artifactId>inbot-datemath</artifactId>
+            <version>1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>io.inbot</groupId>
+            <artifactId>inbot-utils</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jvm</artifactId>
+            <version>3.1.2</version>
+        </dependency>
+        
+        
+        
+        
 
         <dependency>
             <groupId>org.testng</groupId>
