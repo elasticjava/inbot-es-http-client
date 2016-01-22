@@ -1,4 +1,4 @@
-package io.inbot.elasticsearch.jsonclient;
+package io.inbot.elasticsearch.client;
 
 import static com.github.jsonj.tools.JsonBuilder.array;
 import static com.github.jsonj.tools.JsonBuilder.field;
@@ -12,14 +12,11 @@ import com.github.jsonj.JsonElement;
 import com.github.jsonj.JsonObject;
 import com.github.jsonj.exceptions.JsonTypeMismatchException;
 import com.github.jsonj.tools.JsonParser;
-import io.inbot.elasticsearch.client.BulkIndexer;
-import io.inbot.elasticsearch.client.BulkIndexingOperations;
-import io.inbot.elasticsearch.client.ElasticsearchType;
-import io.inbot.elasticsearch.client.EsSearchResponse;
-import io.inbot.elasticsearch.client.IterableSearchResponse;
-import io.inbot.elasticsearch.client.PagedSearchResponse;
+import io.inbot.elasticsearch.bulkindexing.BulkIndexer;
+import io.inbot.elasticsearch.bulkindexing.BulkIndexingOperations;
 import io.inbot.elasticsearch.exceptions.EsBadRequestException;
 import io.inbot.elasticsearch.exceptions.EsNotFoundException;
+import io.inbot.elasticsearch.jsonclient.JsonJRestClient;
 import io.inbot.utils.IOUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

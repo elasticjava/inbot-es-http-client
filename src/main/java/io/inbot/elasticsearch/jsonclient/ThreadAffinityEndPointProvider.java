@@ -11,13 +11,17 @@ import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Simple EndpointProvider implementation that tries to use the same endpoint for each thread that calls it and fails
+ * over sensibly if that endpoint becomes unavailable.
+ */
 public class ThreadAffinityEndPointProvider implements EndpointProvider {
     private static final Logger LOG = LoggerFactory.getLogger(ThreadAffinityEndPointProvider.class);
 
     private final String[] endpoints;
     private final Function<String, Boolean> validateFunction;
 
-    final Map<String,Long> endpointStatus = Maps.newConcurrentMap();
+    private final Map<String,Long> endpointStatus = Maps.newConcurrentMap();
 
     /**
      * @param validateFunction function that returns true if the endpoint is valid and false if it is unavailable. This

@@ -23,7 +23,6 @@ public interface Paging {
         return previous;
     }
 
-
     default int nextFrom() {
         if(hasMoreResults()) {
             return from() + pageSize();

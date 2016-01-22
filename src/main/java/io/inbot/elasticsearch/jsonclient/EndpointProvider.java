@@ -1,5 +1,9 @@
 package io.inbot.elasticsearch.jsonclient;
 
+/**
+ * Interfaces for dealing with service endpoints
+ *
+ */
 public interface EndpointProvider {
 
     /**
@@ -13,6 +17,6 @@ public interface EndpointProvider {
      * @param url the endpoint it tried to connect.
      */
     default void failEndpoint(String url) {
-        // do something meaningful
+        // maybe do something meaningful
     }
 }

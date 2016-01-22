@@ -1,11 +1,8 @@
-package io.inbot.elasticsearch.jsonclient;
+package io.inbot.elasticsearch.client;
 
 import com.github.jsonj.JsonArray;
 import com.github.jsonj.JsonObject;
-import io.inbot.elasticsearch.client.BulkIndexer;
-import io.inbot.elasticsearch.client.ElasticsearchType;
-import io.inbot.elasticsearch.client.IterableSearchResponse;
-import io.inbot.elasticsearch.client.PagedSearchResponse;
+import io.inbot.elasticsearch.bulkindexing.BulkIndexer;
 import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
 

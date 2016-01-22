@@ -1,4 +1,4 @@
-package io.inbot.elasticsearch.client;
+package io.inbot.elasticsearch.bulkindexing;
 
 import static com.github.jsonj.tools.JsonBuilder.field;
 import static com.github.jsonj.tools.JsonBuilder.object;

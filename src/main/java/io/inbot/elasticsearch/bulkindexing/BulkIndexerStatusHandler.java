@@ -1,4 +1,4 @@
-package io.inbot.elasticsearch.client;
+package io.inbot.elasticsearch.bulkindexing;
 
 import com.github.jsonj.JsonObject;
 import java.util.function.Function;

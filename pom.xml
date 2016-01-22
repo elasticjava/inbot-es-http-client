@@ -236,13 +236,6 @@
              -->
             <optional>true</optional>
         </dependency>
-
-        <dependency>
-          <groupId>io.inbot</groupId>
-          <artifactId>inbot-es-launcher</artifactId>
-          <version>1.0</version>
-          <scope>test</scope>
-        </dependency>
         
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -284,11 +277,13 @@
             <artifactId>metrics-jvm</artifactId>
             <version>3.1.2</version>
         </dependency>
-        
-        
-        
-        
 
+        <dependency>
+          <groupId>io.inbot</groupId>
+          <artifactId>inbot-es-launcher</artifactId>
+          <version>1.0</version>
+          <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -322,6 +317,40 @@
             <artifactId>assertj-core</artifactId>
             <version>3.1.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>io.inbot</groupId>
+        	<artifactId>inbot-testfixtures</artifactId>
+        	<version>1.6</version>
+        	<scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.12</version>
+            <optional>true</optional>
+        </dependency>
+        <!-- slf4j replacement for commons-logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.12</version>
+            <optional>true</optional>
+        </dependency>
+        <!-- slf4j replacement for log4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>1.7.12</version>
+            <optional>true</optional>
+        </dependency>
+        <!-- redirect java.utils.Logging to slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>1.7.12</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

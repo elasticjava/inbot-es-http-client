@@ -1,4 +1,4 @@
-package io.inbot.elasticsearch.client;
+package io.inbot.elasticsearch.bulkindexing;
 
 import static com.github.jsonj.tools.JsonBuilder.field;
 import static com.github.jsonj.tools.JsonBuilder.object;
@@ -9,7 +9,7 @@ import com.github.jsonj.JsonArray;
 import com.github.jsonj.JsonObject;
 import com.github.jsonj.exceptions.JsonTypeMismatchException;
 import io.inbot.datemath.DateMath;
-import io.inbot.elasticsearch.jsonclient.EsAPIClient;
+import io.inbot.elasticsearch.client.EsAPIClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
