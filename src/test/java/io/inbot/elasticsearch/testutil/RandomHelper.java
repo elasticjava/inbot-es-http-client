@@ -5,7 +5,7 @@ import java.util.Locale;
 import java.util.Random;
 import org.apache.commons.lang3.StringUtils;
 
-public class TestFixture {
+public class RandomHelper {
     public static final long TESTSEED;
 
     private static final Random RANDOM;
@@ -15,16 +15,17 @@ public class TestFixture {
     private static RandomStringUtilsWithSeed randomStringUtilsWithSeed;
 
     static {
-        long seed=System.nanoTime();
+        long seed = System.nanoTime();
         String customSeed = System.getProperty("inbotTestSeed");
         if(StringUtils.isNotBlank(customSeed)) {
-            seed=Long.valueOf(customSeed);
+            seed = Long.valueOf(customSeed);
         }
         // TODO use logger
-        System.err.println(String.format(Locale.ENGLISH, "\n\nTest random seed: %s. If test fails reproduce order by passing in -DinbotTestSeed=%s\n\n", seed,seed));
-        TESTSEED=seed;
-        RANDOM=new Random(TESTSEED);
-        randomNameGenerator=new RandomNameGenerator(TESTSEED);
+        System.err.println(String.format(Locale.ENGLISH, "\n\nTest random seed: %s. If test fails reproduce order by passing in -DinbotTestSeed=%s\n\n", seed,
+                seed));
+        TESTSEED = seed;
+        RANDOM = new Random(TESTSEED);
+        randomNameGenerator = new RandomNameGenerator(TESTSEED);
         randomStringUtilsWithSeed = new RandomStringUtilsWithSeed(TESTSEED);
     }
 

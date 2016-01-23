@@ -21,9 +21,10 @@ import java.util.Random;
 /**
  * Modified version of apache commons-lang3's RandomStringUtils
  * This class is uses a configurable source of randomness. You can either provide the random instance or a seed.
- *
- * Because this has to be done via the constructor, all the methods are non static in this version. Original documentation below:
- *
+ * 
+ * Because this has to be done via the constructor, all the methods are non static in this version. Original
+ * documentation below:
+ * 
  * <p>
  * Operations for random <code>String</code>s.
  * </p>
@@ -34,11 +35,11 @@ import java.util.Random;
  * surrogate. If a low surrogate is chosen, 56320 (dc00) to 57343 (dfff) then it is placed after a randomly chosen high
  * surrogate.
  * </p>
- *
+ * 
  * <p>
  * #ThreadSafe#
  * </p>
- *
+ * 
  * @author Apache Software Foundation
  * @author <a href="mailto:steven@caswell.name">Steven Caswell</a>
  * @author Gary Gregory
@@ -63,6 +64,7 @@ public class RandomStringUtilsWithSeed {
     public RandomStringUtilsWithSeed(long seed) {
         RANDOM = new Random(seed);
     }
+
     public RandomStringUtilsWithSeed(Random r) {
         RANDOM = r;
     }
@@ -73,11 +75,11 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string whose length is the number of characters specified.
      * </p>
-     *
+     * 
      * <p>
      * Characters will be chosen from the set of all characters.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @return the random string
@@ -90,12 +92,12 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string whose length is the number of characters specified.
      * </p>
-     *
+     * 
      * <p>
      * Characters will be chosen from the set of characters whose ASCII value is between <code>32</code> and
      * <code>126</code> (inclusive).
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @return the random string
@@ -108,11 +110,11 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string whose length is the number of characters specified.
      * </p>
-     *
+     * 
      * <p>
      * Characters will be chosen from the set of alphabetic characters.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @return the random string
@@ -125,11 +127,11 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string whose length is the number of characters specified.
      * </p>
-     *
+     * 
      * <p>
      * Characters will be chosen from the set of alpha-numeric characters.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @return the random string
@@ -142,11 +144,11 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string whose length is the number of characters specified.
      * </p>
-     *
+     * 
      * <p>
      * Characters will be chosen from the set of numeric characters.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @return the random string
@@ -159,11 +161,11 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string whose length is the number of characters specified.
      * </p>
-     *
+     * 
      * <p>
      * Characters will be chosen from the set of alpha-numeric characters as indicated by the arguments.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @param letters
@@ -182,11 +184,11 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string whose length is the number of characters specified.
      * </p>
-     *
+     * 
      * <p>
      * Characters will be chosen from the set of alpha-numeric characters as indicated by the arguments.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @param start
@@ -209,13 +211,13 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string based on a variety of options, using default source of randomness.
      * </p>
-     *
+     * 
      * <p>
      * This method has exactly the same semantics as {@link #random(int,int,int,boolean,boolean,char[],Random)}, but
      * instead of using an externally supplied source of randomness, it uses the internal static {@link Random}
      * instance.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @param start
@@ -241,22 +243,22 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string based on a variety of options, using supplied source of randomness.
      * </p>
-     *
+     * 
      * <p>
      * If start and end are both <code>0</code>, start and end are set to <code>' '</code> and <code>'z'</code>, the
      * ASCII printable characters, will be used, unless letters and numbers are both <code>false</code>, in which case,
      * start and end are set to <code>0</code> and <code>Integer.MAX_VALUE</code>.
-     *
+     * 
      * <p>
      * If set is not <code>null</code>, characters between start and end are chosen.
      * </p>
-     *
+     * 
      * <p>
      * This method accepts a user-supplied {@link Random} instance to use as a source of randomness. By seeding a single
      * {@link Random} instance with a fixed seed and using it for each call, the same random sequence of strings can be
      * generated repeatedly and predictably.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @param start
@@ -340,11 +342,11 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string whose length is the number of characters specified.
      * </p>
-     *
+     * 
      * <p>
      * Characters will be chosen from the set of characters specified.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @param chars
@@ -365,11 +367,11 @@ public class RandomStringUtilsWithSeed {
      * <p>
      * Creates a random string whose length is the number of characters specified.
      * </p>
-     *
+     * 
      * <p>
      * Characters will be chosen from the set of characters specified.
      * </p>
-     *
+     * 
      * @param count
      *            the length of random string to create
      * @param chars
