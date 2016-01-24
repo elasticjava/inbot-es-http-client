@@ -61,11 +61,11 @@ public interface EsAPIClient {
 
     JsonArray indicesFor(String alias);
 
-    IterableSearchResponse iterableSearch(ElasticsearchType type, JsonObject q, int pageSize, int ttlMinutes, boolean rawResults);
+    IterableSearchResponse iterableSearch(ElasticSearchType type, JsonObject q, int pageSize, int ttlMinutes, boolean rawResults);
 
     IterableSearchResponse iterableSearch(String index, String type, JsonObject q, int pageSize, int ttlMinutes, boolean rawResults);
 
-    PagedSearchResponse pagedSearch(ElasticsearchType type, JsonObject q, int size, int from);
+    PagedSearchResponse pagedSearch(ElasticSearchType type, JsonObject q, int size, int from);
 
     PagedSearchResponse pagedSearch(String index, String type, JsonObject q, int size, int from);
 
@@ -84,7 +84,7 @@ public interface EsAPIClient {
     void restore(String indexName, String file);
 
     JsonObject search(String index, String type, JsonObject query);
-    default JsonObject search(ElasticsearchType type, JsonObject query) {
+    default JsonObject search(ElasticSearchType type, JsonObject query) {
         return search(type.readAlias(), type.type(), query);
     }
 

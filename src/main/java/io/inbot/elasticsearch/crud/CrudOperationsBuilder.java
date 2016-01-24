@@ -1,7 +1,7 @@
 package io.inbot.elasticsearch.crud;
 
 import com.github.jsonj.tools.JsonParser;
-import io.inbot.elasticsearch.client.ElasticsearchType;
+import io.inbot.elasticsearch.client.ElasticSearchType;
 import io.inbot.elasticsearch.client.EsAPIClient;
 import io.inbot.elasticsearch.crud.CrudOperations;
 import io.inbot.elasticsearch.crud.EsCrudDao;
@@ -16,7 +16,7 @@ import io.inbot.redis.RedisCache;
 import redis.clients.jedis.JedisPool;
 
 public class CrudOperationsBuilder {
-    private final ElasticsearchType indexType;
+    private final ElasticSearchType indexType;
     private final EsAPIClient esApiClient;
 
     private final JsonParser parser;
@@ -34,7 +34,7 @@ public class CrudOperationsBuilder {
      * Don't call this directly and use the CrudOperationsFactory instead.
      */
     CrudOperationsBuilder(EsAPIClient esApiClient, JsonParser parser, JedisPool jedisPool, RedisBackedCircularStack redisBackedCircularStack,
-            ElasticsearchType indexType) {
+            ElasticSearchType indexType) {
         this.esApiClient = esApiClient;
         this.parser = parser;
         this.jedisPool = jedisPool;

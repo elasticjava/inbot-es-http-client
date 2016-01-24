@@ -14,7 +14,7 @@ import io.inbot.datemath.DateMath;
 import io.inbot.elasticsearch.bulkindexing.BulkIndexer;
 import io.inbot.elasticsearch.bulkindexing.BulkIndexerStatusHandler;
 import io.inbot.elasticsearch.client.ElasticSearchIndex;
-import io.inbot.elasticsearch.client.ElasticsearchType;
+import io.inbot.elasticsearch.client.ElasticSearchType;
 import io.inbot.elasticsearch.client.EsAPIClient;
 import io.inbot.elasticsearch.client.IterableSearchResponse;
 import io.inbot.elasticsearch.client.PagedSearchResponse;
@@ -51,7 +51,7 @@ public class EsCrudDao implements CrudOperations {
 
     private final Timer getTimer;
 
-    public EsCrudDao(ElasticsearchType type, EsAPIClient client, RedisBackedCircularStack circularStack, int updateRetries) {
+    public EsCrudDao(ElasticSearchType type, EsAPIClient client, RedisBackedCircularStack circularStack, int updateRetries) {
         this.circularStack = circularStack;
         this.updateRetries = updateRetries;
         this.index = type.index();

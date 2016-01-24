@@ -1,16 +1,14 @@
 package io.inbot.elasticsearch.testutil;
 
-import io.inbot.testfixtures.RandomNameGenerator;
 import java.util.Locale;
 import java.util.Random;
+import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 
 public class RandomHelper {
     public static final long TESTSEED;
 
     private static final Random RANDOM;
-
-    private static final RandomNameGenerator randomNameGenerator;
 
     private static RandomStringUtilsWithSeed randomStringUtilsWithSeed;
 
@@ -25,7 +23,6 @@ public class RandomHelper {
                 seed));
         TESTSEED = seed;
         RANDOM = new Random(TESTSEED);
-        randomNameGenerator = new RandomNameGenerator(TESTSEED);
         randomStringUtilsWithSeed = new RandomStringUtilsWithSeed(TESTSEED);
     }
 
@@ -37,5 +34,11 @@ public class RandomHelper {
         }
         return word;
     }
+
+    public static String randomId() {
+        return UUID.randomUUID().toString();
+    }
+
+
 
 }

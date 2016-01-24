@@ -7,10 +7,9 @@ import static org.assertj.core.api.StrictAssertions.assertThat;
 import com.github.jsonj.JsonObject;
 import com.github.jsonj.tools.JsonParser;
 import io.inbot.elasticsearch.client.EsAPIClient;
-import io.inbot.elasticsearch.client.HttpEsAPIClient;
 import io.inbot.elasticsearch.client.QueryBuilder;
 import io.inbot.elasticsearch.client.SearchResponse;
-import io.inbot.elasticsearch.jsonclient.JsonJRestClient;
+import io.inbot.elasticsearch.testutil.DiyTestContext;
 import io.inbot.elasticsearch.testutil.EsTestLauncher;
 import io.inbot.elasticsearch.testutil.RandomHelper;
 import io.inbot.elasticsearch.testutil.RandomIndexHelper;
@@ -24,16 +23,12 @@ import org.testng.annotations.Test;
 @Test
 public class BulkIndexerIntegrationTest {
 
-    private EsAPIClient client;
-    private JsonParser jsonparser;
+    private final EsAPIClient client = DiyTestContext.instance.client;
+    private final JsonParser parser = DiyTestContext.instance.parser;
 
     @BeforeMethod
     public void before() throws IOException {
         EsTestLauncher.ensureEsIsUp();
-        JsonJRestClient simpleClient = JsonJRestClient.simpleClient(EsTestLauncher.ES_URL);
-        jsonparser = new JsonParser();
-        client = new HttpEsAPIClient(simpleClient, jsonparser, 10000);
-
     }
 
     public void shouldIndexMultipleJsonObjects() throws IOException {
@@ -162,7 +157,7 @@ public class BulkIndexerIntegrationTest {
         List<JsonObject> oldobjects = new ArrayList<>();
         for (int i=0; i < 20; i++) {
             String object = client.getObject(index.index, index.type, Integer.toString(i)).toString();
-            JsonObject a = (JsonObject) jsonparser.parseObject(object).get("_source");
+            JsonObject a = (JsonObject) parser.parseObject(object).get("_source");
             oldobjects.add(a);
         }
 

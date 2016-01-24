@@ -246,7 +246,7 @@ public class HttpEsAPIClient implements EsAPIClient {
     }
 
     @Override
-    public IterableSearchResponse iterableSearch(ElasticsearchType type, JsonObject q, int pageSize, int ttlMinutes, boolean rawResults) {
+    public IterableSearchResponse iterableSearch(ElasticSearchType type, JsonObject q, int pageSize, int ttlMinutes, boolean rawResults) {
         return iterableSearch(type.readAlias(), type.type(), q, pageSize, ttlMinutes, rawResults);
     }
 
@@ -337,7 +337,7 @@ public class HttpEsAPIClient implements EsAPIClient {
     }
 
     @Override
-    public PagedSearchResponse pagedSearch(ElasticsearchType type, JsonObject q, int size, int from) {
+    public PagedSearchResponse pagedSearch(ElasticSearchType type, JsonObject q, int size, int from) {
         return pagedSearch(type.readAlias(), type.type(), q, size, from);
     }
 

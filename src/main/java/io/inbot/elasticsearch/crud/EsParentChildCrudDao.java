@@ -7,7 +7,7 @@ import com.github.jsonj.JsonObject;
 import io.inbot.datemath.DateMath;
 import io.inbot.elasticsearch.bulkindexing.BulkIndexingOperations;
 import io.inbot.elasticsearch.client.ElasticSearchIndex;
-import io.inbot.elasticsearch.client.ElasticsearchType;
+import io.inbot.elasticsearch.client.ElasticSearchType;
 import io.inbot.elasticsearch.client.EsAPIClient;
 import io.inbot.elasticsearch.client.IterableSearchResponse;
 import io.inbot.elasticsearch.client.PagedSearchResponse;
@@ -38,7 +38,7 @@ public final class EsParentChildCrudDao implements ParentChildCrudOperations {
     private final int maxUpdateRetries;
     private final Timer getTimer;
 
-    public EsParentChildCrudDao(ElasticsearchType type, EsAPIClient client, RedisBackedCircularStack recentlyModifiedIdsStack, int maxUpdateRetries) {
+    public EsParentChildCrudDao(ElasticSearchType type, EsAPIClient client, RedisBackedCircularStack recentlyModifiedIdsStack, int maxUpdateRetries) {
         this.recentlyModifiedIdsStack = recentlyModifiedIdsStack;
         this.maxUpdateRetries = maxUpdateRetries;
         this.index = type.index();

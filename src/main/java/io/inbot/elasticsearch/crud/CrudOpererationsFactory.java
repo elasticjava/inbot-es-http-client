@@ -1,7 +1,7 @@
 package io.inbot.elasticsearch.crud;
 
 import com.github.jsonj.tools.JsonParser;
-import io.inbot.elasticsearch.client.ElasticsearchType;
+import io.inbot.elasticsearch.client.ElasticSearchType;
 import io.inbot.elasticsearch.client.EsAPIClient;
 import io.inbot.redis.RedisBackedCircularStack;
 import redis.clients.jedis.JedisPool;
@@ -19,7 +19,7 @@ public class CrudOpererationsFactory {
         this.redisBackedCircularStack = redisBackedCircularStack;
     }
 
-    public CrudOperationsBuilder builder(ElasticsearchType type) {
+    public CrudOperationsBuilder builder(ElasticSearchType type) {
         return new CrudOperationsBuilder(esApiClient, parser, jedisPool, redisBackedCircularStack, type);
     }
 }
