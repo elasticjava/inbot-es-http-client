@@ -11,8 +11,9 @@ import io.inbot.redis.RedisBackedCircularStack;
 /**
  * Since we don't have spring in this project and since I don't like to copy paste a lot of bean initialation across my
  * tests, we implement DIY dependency injection.
- *
- * It works very simple. We have a per jvm application context, it has beans, they get initialized in this class, you use them where you need them by
+ * 
+ * It works very simple. We have a per jvm application context, it has beans, they get initialized in this class, you
+ * use them where you need them by
  * 'looking them up' and injecting them where you need them.
  */
 public class DiyTestContext {

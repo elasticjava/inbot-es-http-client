@@ -39,6 +39,4 @@ public class RandomHelper {
         return UUID.randomUUID().toString();
     }
 
-
-
 }
