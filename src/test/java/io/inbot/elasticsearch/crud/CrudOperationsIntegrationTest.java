@@ -29,23 +29,23 @@ import org.testng.annotations.Test;
 @Test
 public class CrudOperationsIntegrationTest {
 
-    private CrudOperations dao;
     private EsAPIClient client;
+    private CrudOpererationsFactory crudOperationsFactory;
 
     @BeforeMethod
     public void before() {
         EsTestLauncher.ensureEsIsUp();
 
-        CrudOpererationsFactory crudOperationsFactory = DiyTestContext.instance.crudOperationsFactory;
+        crudOperationsFactory = DiyTestContext.instance.crudOperationsFactory;
         client=DiyTestContext.instance.client;
 
-        ElasticSearchIndex index = ElasticSearchIndex.create("test", 1, "mapping-v1.json");
-        ElasticSearchType type = ElasticSearchType.create(index, "test");
-
-        dao=crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
     }
 
     public void shouldCreateUpdateGetAndDeleteEvent() {
+        ElasticSearchIndex index = ElasticSearchIndex.create(RandomHelper.randomIndexName(), 1, "mapping-v1.json");
+        ElasticSearchType type = ElasticSearchType.create(index, "test");
+
+        CrudOperations dao = crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
         JsonObject created = dao.create(randomObject(), false);
         String id = created.getString("id");
         dao.update(id, true, o -> {
@@ -62,6 +62,11 @@ public class CrudOperationsIntegrationTest {
 
     @Test(expectedExceptions = EsVersionConflictException.class)
     public void shouldNotAllowDoubleCreation() {
+        ElasticSearchIndex index = ElasticSearchIndex.create(RandomHelper.randomIndexName(), 1, "mapping-v1.json");
+        ElasticSearchType type = ElasticSearchType.create(index, "test");
+
+        CrudOperations dao = crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
+
         JsonObject event = randomObject();
         dao.create(event, false);
         dao.create(event, false);
@@ -74,6 +79,11 @@ public class CrudOperationsIntegrationTest {
     }
 
     public void shouldUseInMemoryCacheAndInvalidate() {
+        ElasticSearchIndex index = ElasticSearchIndex.create(RandomHelper.randomIndexName(), 1, "mapping-v1.json");
+        ElasticSearchType type = ElasticSearchType.create(index, "test");
+
+        CrudOperations dao = crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
+
         GuavaCachingCrudDao cachingCrud = new GuavaCachingCrudDao(dao, 20, 20);
         String id = HashUtils.createId();
         JsonObject created = cachingCrud.create(object(field("id", id)), false);
@@ -92,6 +102,11 @@ public class CrudOperationsIntegrationTest {
     }
 
     public void shouldRecoverFromVersionConflict() throws InterruptedException {
+        ElasticSearchIndex index = ElasticSearchIndex.create(RandomHelper.randomIndexName(), 1, "mapping-v1.json");
+        ElasticSearchType type = ElasticSearchType.create(index, "test");
+
+        CrudOperations dao = crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
+
         String id = HashUtils.createId();
 
         final JsonObject o=object(
@@ -130,6 +145,11 @@ public class CrudOperationsIntegrationTest {
     }
 
     public void shouldUpdate() throws InterruptedException {
+        ElasticSearchIndex index = ElasticSearchIndex.create(RandomHelper.randomIndexName(), 1, "mapping-v1.json");
+        ElasticSearchType type = ElasticSearchType.create(index, "test");
+
+        CrudOperations dao = crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
+
         String id = HashUtils.createId();
 
         final JsonObject o=object(
@@ -168,6 +188,11 @@ public class CrudOperationsIntegrationTest {
     }
 
     public void shouldDoMultiGet() {
+        ElasticSearchIndex index = ElasticSearchIndex.create(RandomHelper.randomIndexName(), 1, "mapping-v1.json");
+        ElasticSearchType type = ElasticSearchType.create(index, "test");
+
+        CrudOperations dao = crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
+
         JsonArray objects=array();
         for(int i=0; i<10; i++) {
             objects.add(dao.create(object(
@@ -182,6 +207,11 @@ public class CrudOperationsIntegrationTest {
     }
 
     public void shouldKeepTrackOfModifiedIds() {
+        ElasticSearchIndex index = ElasticSearchIndex.create(RandomHelper.randomIndexName(), 1, "mapping-v1.json");
+        ElasticSearchType type = ElasticSearchType.create(index, "test");
+
+        CrudOperations dao = crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
+
         JsonArray ids = array();
         for(int i=0; i<10; i++) {
             String id = HashUtils.createId();
