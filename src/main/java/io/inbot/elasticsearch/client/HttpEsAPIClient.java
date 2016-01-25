@@ -80,8 +80,12 @@ public class HttpEsAPIClient implements EsAPIClient {
         migrateIndex(index, -1); // creates the index with the configured number of replicas on the cluster
     }
 
+    /* (non-Javadoc)
+     * @see io.inbot.elasticsearch.client.EsAPIClient#migrateIndex(io.inbot.elasticsearch.client.ElasticSearchIndex, int)
+     */
     @Override
     public void migrateIndex(ElasticSearchIndex index, int replicas) {
+        // NOTE this does not tolerate concurrent updates to the index, you may lose data
         String alias = index.aliasPrefix(); // the index name without the version or read/write aliases
         String mappingResource = index.mappingResource();
 
@@ -120,6 +124,8 @@ public class HttpEsAPIClient implements EsAPIClient {
                                 .orElseThrow(() -> new EsNotFoundException());
 
                         // reindex any documents that were added since we began the migration
+                        // IMPORTANT any updates may end up overwriting each other: https://blog.codecentric.de/en/2014/09/elasticsearch-zero-downtime-reindexing-problems-solutions/
+                        // You may want to avoid doing this on a live server
                         JsonObject modifiedQuery = QueryBuilder.rangeQuery("updated_at", DateMath.formatIsoDate(startTime - 5000), true, null, true);
                         reindexSuccessfull = reindexSuccessfull && reindex(index, oldIndex, modifiedQuery);
 
