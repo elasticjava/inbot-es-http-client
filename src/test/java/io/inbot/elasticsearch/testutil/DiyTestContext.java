@@ -17,8 +17,7 @@ import redis.clients.jedis.JedisPool;
  * tests, we implement DIY dependency injection.
  * 
  * It works very simple. We have a per jvm application context, it has beans, they get initialized in this class, you
- * use them where you need them by
- * 'looking them up' and injecting them where you need them.
+ * use them where you need them by 'looking them up' and injecting them where you need them.
  */
 public class DiyTestContext {
     private static final Logger LOG = LoggerFactory.getLogger(DiyTestContext.class);
