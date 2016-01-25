@@ -18,6 +18,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Simple redis cache that you can use to wrap an existing CrudOperations instance. Handles cache invalidation for single updates/deletes but not bulk operations
+ */
 public class RedisCachingCrudDao implements CrudOperations {
 
     private final CrudOperations crudDao;

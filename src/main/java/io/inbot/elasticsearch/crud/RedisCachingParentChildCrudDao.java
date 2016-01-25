@@ -12,6 +12,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+/**
+ * Simple redis cache that you can use to wrap an existing ParentChildCrudOperations instance. Handles cache invalidation for single updates/deletes but not bulk operations
+ */
 public class RedisCachingParentChildCrudDao implements ParentChildCrudOperations {
 
     private final ParentChildCrudOperations dao;
