@@ -39,10 +39,7 @@ public class CrudOpererationsFactory {
         private int maxInMemoryItems;
         private int inMemoryExpireAfterWriteSeconds;
 
-        /**
-         * Don't call this directly and use the CrudOperationsFactory instead.
-         */
-        CrudOperationsBuilder(EsAPIClient esApiClient, JsonParser parser, JedisPool jedisPool, RedisBackedCircularStack redisBackedCircularStack,
+        private CrudOperationsBuilder(EsAPIClient esApiClient, JsonParser parser, JedisPool jedisPool, RedisBackedCircularStack redisBackedCircularStack,
                 ElasticSearchType indexType) {
             this.esApiClient = esApiClient;
             this.parser = parser;
@@ -51,11 +48,22 @@ public class CrudOpererationsFactory {
             this.indexType = indexType;
         }
 
+        /**
+         * @param times Amount of times updates should be retried in case of a version conflict
+         * @return builder
+         */
         public CrudOperationsBuilder retryUpdates(int times) {
             retryUpdates = times;
             return this;
         }
 
+        /**
+         * Add a redis cache.
+         * @param enableRedis true if you want caching in redis
+         * @param expireAfterWriteInSeconds ttl of the objects in redis
+         * @param prefix key prefix that is to be used
+         * @return builder
+         */
         public CrudOperationsBuilder enableRedisCache(boolean enableRedis, int expireAfterWriteInSeconds, String prefix) {
             if(enableRedis) {
                 this.redisExpireAfterWriteInSeconds = expireAfterWriteInSeconds;
@@ -65,6 +73,12 @@ public class CrudOpererationsFactory {
             return this;
         }
 
+        /**
+         * Add guava cache.
+         * @param maxItems maximum number of items to keep in memory.
+         * @param expireAfterWriteSeconds ttl of in memory objects
+         * @return builder
+         */
         public CrudOperationsBuilder enableInMemoryCache(int maxItems, int expireAfterWriteSeconds) {
             this.maxInMemoryItems = maxItems;
             this.inMemoryExpireAfterWriteSeconds = expireAfterWriteSeconds;
@@ -72,6 +86,9 @@ public class CrudOpererationsFactory {
             return this;
         }
 
+        /**
+         * @return CrudOperations for objects without a parent.
+         */
         public CrudOperations dao() {
             if(indexType.parentChild()) {
                 throw new IllegalStateException("type " + indexType + " specifies parent child relations");
@@ -87,6 +104,9 @@ public class CrudOpererationsFactory {
             return dao;
         }
 
+        /**
+         * @return ParentChildCrudOperations for objects with a parent.
+         */
         public ParentChildCrudOperations childDao() {
             if(!indexType.parentChild()) {
                 throw new IllegalStateException("type " + indexType + " does not specify parent child relations");
