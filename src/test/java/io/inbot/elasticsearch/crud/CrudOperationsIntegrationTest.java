@@ -17,6 +17,7 @@ import io.inbot.elasticsearch.testutil.DiyTestContext;
 import io.inbot.elasticsearch.testutil.EsTestLauncher;
 import io.inbot.elasticsearch.testutil.RandomHelper;
 import io.inbot.utils.HashUtils;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -178,5 +179,28 @@ public class CrudOperationsIntegrationTest {
 
         JsonArray retrieved = dao.mget(true, ids);
         assertThat(retrieved.size()).isEqualTo(10);
+    }
+
+    public void shouldKeepTrackOfModifiedIds() {
+        JsonArray ids = array();
+        for(int i=0; i<10; i++) {
+            String id = HashUtils.createId();
+            dao.create(object(
+                    field("id", id),
+                    field("message","foo")
+                    ), true);
+            ids.add(id);
+        }
+        client.refresh();
+        for(int i=0; i<10; i+=2) {
+            dao.update(ids.get(i).asString(), true, object -> {
+                object.put("message", "bar");
+                return object;
+            });
+        }
+        // we could use this set to swap out stale search results with their current version that we can get from the dao
+        Set<String> recentlyModifiedIds = dao.recentlyModifiedIds();
+        // we just modified some objects so should be same size
+        assertThat(recentlyModifiedIds.size()).isEqualTo(5);
     }
 }
