@@ -12,7 +12,7 @@
 - Redis and Guava caching support with invalidation
 - Safe updates that retry their lambda update function in case of a version conflict. Works in bulk as well
 - Simple migration helper that you can use to manage schema changes. Note. this currently should not be considered safe in any environment where documents get updated during the migration.
-- ...
+- ... look at our tests for an idea on how to use it.
 
 # Why and how?
 
@@ -31,6 +31,8 @@ Facts:
 - We know it works because our internal integration tests use this a lot but test coverage inside this recently ossed project is obviously less than ideal. This needs to be remedied. We welcome pullrequests for this.
 - It does not currently support the full ES API. We only implemented the bits we use. The good news is that this is easily addressed. We welcome pull requests for this.
 - Nobody else currently is using this because we just released it; so you'll have to take our word for all this ;-)
+- The API is not entirely stable yet. I may move things around as long as it is easy and convenient. At some point we'll slap on 1.0 but until then this is not a final API. 
+
 
 # Maven
 
