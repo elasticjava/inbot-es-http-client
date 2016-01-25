@@ -49,7 +49,8 @@ public class CrudOpererationsFactory {
         }
 
         /**
-         * @param times Amount of times updates should be retried in case of a version conflict
+         * @param times
+         *            Amount of times updates should be retried in case of a version conflict
          * @return builder
          */
         public CrudOperationsBuilder retryUpdates(int times) {
@@ -59,9 +60,13 @@ public class CrudOpererationsFactory {
 
         /**
          * Add a redis cache.
-         * @param enableRedis true if you want caching in redis
-         * @param expireAfterWriteInSeconds ttl of the objects in redis
-         * @param prefix key prefix that is to be used
+         * 
+         * @param enableRedis
+         *            true if you want caching in redis
+         * @param expireAfterWriteInSeconds
+         *            ttl of the objects in redis
+         * @param prefix
+         *            key prefix that is to be used
          * @return builder
          */
         public CrudOperationsBuilder enableRedisCache(boolean enableRedis, int expireAfterWriteInSeconds, String prefix) {
@@ -75,8 +80,11 @@ public class CrudOpererationsFactory {
 
         /**
          * Add guava cache.
-         * @param maxItems maximum number of items to keep in memory.
-         * @param expireAfterWriteSeconds ttl of in memory objects
+         * 
+         * @param maxItems
+         *            maximum number of items to keep in memory.
+         * @param expireAfterWriteSeconds
+         *            ttl of in memory objects
          * @return builder
          */
         public CrudOperationsBuilder enableInMemoryCache(int maxItems, int expireAfterWriteSeconds) {
@@ -114,7 +122,8 @@ public class CrudOpererationsFactory {
 
             ParentChildCrudOperations dao = new EsParentChildCrudDao(indexType, esApiClient, redisBackedCircularStack, retryUpdates);
             if(redis) {
-                dao = new RedisCachingParentChildCrudDao(dao, new RedisCache(jedisPool, parser, redisPrefix, indexType.version(), redisExpireAfterWriteInSeconds));
+                dao = new RedisCachingParentChildCrudDao(dao, new RedisCache(jedisPool, parser, redisPrefix, indexType.version(),
+                        redisExpireAfterWriteInSeconds));
             }
             if(inMemoryCache) {
                 dao = new GuavaCachingChildCrudDao(dao, maxInMemoryItems, inMemoryExpireAfterWriteSeconds);
