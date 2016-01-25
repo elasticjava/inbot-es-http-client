@@ -3,14 +3,18 @@ package io.inbot.elasticsearch.bulkindexing;
 import com.github.jsonj.JsonObject;
 import java.util.function.Function;
 
-public class EsBulkRequestObject {
+/**
+ * Simple model class to represent a single bulk operation
+ *
+ */
+class EsBulkOperation {
 
     public final JsonObject metadata;
     public final JsonObject object;
     public final Function<JsonObject, JsonObject> transformFunction; // used during update
 
 
-    public EsBulkRequestObject(JsonObject metadata, JsonObject object, Function<JsonObject,JsonObject> transformFunction) {
+    public EsBulkOperation(JsonObject metadata, JsonObject object, Function<JsonObject,JsonObject> transformFunction) {
         this.metadata = metadata;
         this.object = object;
         this.transformFunction = transformFunction;

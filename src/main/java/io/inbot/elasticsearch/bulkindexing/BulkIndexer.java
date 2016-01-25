@@ -49,7 +49,7 @@ public class BulkIndexer implements BulkIndexingOperations {
     private final Meter flushMeter;
     private final Meter errorMeter;
 
-    ArrayList<EsBulkRequestObject> request = new ArrayList<EsBulkRequestObject>();
+    ArrayList<EsBulkOperation> request = new ArrayList<EsBulkOperation>();
     AtomicLong count = new AtomicLong();
     AtomicLong totalErrors = new AtomicLong();
     AtomicLong indexed = new AtomicLong();
@@ -202,7 +202,7 @@ public class BulkIndexer implements BulkIndexingOperations {
             if(version != null) {
                 metadata.getOrCreateObject("index").add(field("_version", version));
             }
-            EsBulkRequestObject requestobject = new EsBulkRequestObject(metadata, object, null);
+            EsBulkOperation requestobject = new EsBulkOperation(metadata, object, null);
 
             request.add(requestobject);
             indexMeter.mark();
@@ -226,7 +226,7 @@ public class BulkIndexer implements BulkIndexingOperations {
     public void delete(String index, String type, String id) {
         lock.lock();
         try {
-            request.add(new EsBulkRequestObject(object(field("delete", object(field("_index",index),field("_type",type),field("_id",id)))), null, null));
+            request.add(new EsBulkOperation(object(field("delete", object(field("_index",index),field("_type",type),field("_id",id)))), null, null));
             deleteMeter.mark();
             count.incrementAndGet();
         } finally {
@@ -263,7 +263,7 @@ public class BulkIndexer implements BulkIndexingOperations {
                 }
 
                 JsonObject meta = object(field("index", attributes));
-                EsBulkRequestObject requestobject = new EsBulkRequestObject(meta,changedObject, transformFunction);
+                EsBulkOperation requestobject = new EsBulkOperation(meta,changedObject, transformFunction);
 
                 request.add(requestobject);
                 updateMeter.mark();
@@ -288,10 +288,10 @@ public class BulkIndexer implements BulkIndexingOperations {
         StringBuilder body = new StringBuilder();
         try {
             lock.lock();
-            ArrayList<EsBulkRequestObject> currentRequestObjects = new ArrayList<EsBulkRequestObject>();
+            ArrayList<EsBulkOperation> currentRequestObjects = new ArrayList<EsBulkOperation>();
             if(request.size() > 0) {
 
-                for(EsBulkRequestObject es : request) {
+                for(EsBulkOperation es : request) {
                     body.append(es.toString());
                     currentRequestObjects.add(es);
                 }
@@ -329,7 +329,7 @@ public class BulkIndexer implements BulkIndexingOperations {
                                                 Matcher matcher = VERSION_CONFLICT_PATTERN.matcher(reason);
                                                 if(matcher.find()) {
                                                     String provided = matcher.group(2);
-                                                    for(EsBulkRequestObject r: currentRequestObjects) {
+                                                    for(EsBulkOperation r: currentRequestObjects) {
                                                         String theId = item.getString("index","_id");
                                                         if(!r.isSameVersion(theId, provided)) {
                                                             statusHandler.handleVersionConflict(theId, r.transformFunction);

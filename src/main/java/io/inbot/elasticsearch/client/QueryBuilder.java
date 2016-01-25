@@ -15,7 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 /**
- * Factory methods for creating elastic search queries
+ * Some factory methods for creating elastic search queries. Note, this class is incomplete and probably does not support the complete es DSL at this point.
+ *
+ * I'm adding things on a need to have basis. Pull requests welcome.
  */
 public class QueryBuilder {
     public static JsonObject matchAll() {

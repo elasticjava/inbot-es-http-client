@@ -7,6 +7,9 @@ import com.github.jsonj.JsonObject;
 import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 
+/**
+ * Simple bulk indexer status handler that logs important events.
+ */
 public class LoggingStatusHandler implements BulkIndexerStatusHandler {
     private final Logger log;
     private final boolean verbose;
