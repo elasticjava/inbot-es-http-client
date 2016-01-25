@@ -39,4 +39,8 @@ public class RandomHelper {
         return UUID.randomUUID().toString();
     }
 
+    public static String randomIndexName() {
+        return "test_" + randomStringUtilsWithSeed.randomAlphanumeric(10).toLowerCase(Locale.ENGLISH);
+    }
+
 }

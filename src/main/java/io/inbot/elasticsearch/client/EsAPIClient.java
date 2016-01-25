@@ -98,4 +98,8 @@ public interface EsAPIClient {
     void backup(ElasticSearchIndex index, String file);
 
     void migrateIndex(ElasticSearchIndex index);
+
+    void migrateIndex(ElasticSearchIndex index, int replicas);
+
+    JsonObject getAliases();
 }

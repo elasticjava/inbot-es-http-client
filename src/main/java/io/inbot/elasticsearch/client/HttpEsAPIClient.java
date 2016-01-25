@@ -53,6 +53,11 @@ public class HttpEsAPIClient implements EsAPIClient {
     }
 
     @Override
+    public JsonObject getAliases() {
+        return jsonJRestClient.get("/_aliases").get();
+    }
+
+    @Override
     public void backup(String indexName, String file) {
         try(BufferedWriter bw = IOUtils.gzipFileWriter(file)) {
             JsonObject q = queryWithVersion(matchAll());
@@ -70,22 +75,30 @@ public class HttpEsAPIClient implements EsAPIClient {
         backup(index.readAlias(), file);
     }
 
+    @Override
     public void migrateIndex(ElasticSearchIndex index) {
-        String alias = index.aliasPrefix();
-        String indexVersion = "_v" + index.version();
+        migrateIndex(index, -1); // creates the index with the configured number of replicas on the cluster
+    }
+
+    @Override
+    public void migrateIndex(ElasticSearchIndex index, int replicas) {
+        String alias = index.aliasPrefix(); // the index name without the version or read/write aliases
         String mappingResource = index.mappingResource();
 
         if(isIndexMigrationNeeded(index)) {
-            String newIndex = alias + indexVersion;
+            String newIndex = index.indexName();
             if(!aliasExists(alias) && indexExists(alias)) {
+                // somebody managed to index stuff before we had a chance to create the index properly
                 throw new IllegalStateException("an index already exists with the alias name " + alias);
             }
             if(!indexExists(newIndex)) {
-                createIndexMappingFromResource(newIndex, mappingResource, -1);
+                // no index exists of the specified version
+                createIndexMappingFromResource(newIndex, mappingResource, replicas);
             }
             if(aliasExists(alias)) {
                 JsonArray currentIndices = indicesFor(alias);
                 if(currentIndices.size() > 1) {
+                    // we don't support this currently
                     throw new IllegalArgumentException("cannot swap alias " + alias + " because it points to more than one index: " + currentIndices);
                 } else if(currentIndices.size() == 1) {
                     if(!newIndex.equals(currentIndices.get(0).asString())) {
@@ -129,7 +142,7 @@ public class HttpEsAPIClient implements EsAPIClient {
                     throw new IllegalStateException("an index already exists with the alias name " + alias);
                 }
                 if(!indexExists(newIndex)) {
-                    createIndexMappingFromResource(newIndex, mappingResource, -1);
+                    createIndexMappingFromResource(newIndex, mappingResource, replicas);
                 }
                 JsonArray actions = array();
 
@@ -275,7 +288,7 @@ public class HttpEsAPIClient implements EsAPIClient {
 
     @Override
     public boolean deleteIndex(String index) {
-        return jsonJRestClient.delete(UrlBuilder.url("/").append("index").build()).orElse(null) != null;
+        return jsonJRestClient.delete(UrlBuilder.url("/").append(index).build()).orElse(null) != null;
     }
 
     @Override
