@@ -49,10 +49,6 @@ public interface EsAPIClient {
     JsonObject getObject(String index, String type, String id);
     JsonObject getObject(String index, String type, String id, String parentId);
 
-
-//    String pagingSearch(String index, String type, JsonObject q, int pageSize, int ttlMinutes);
-//    String nextPage(String pageId,int ttlMinutes);
-
     JsonObject getObjects(String index, String type, String...ids);
 
     JsonObject getPercolator(String index, String id);
@@ -84,6 +80,7 @@ public interface EsAPIClient {
     void restore(String indexName, String file);
 
     JsonObject search(String index, String type, JsonObject query);
+
     default JsonObject search(ElasticSearchType type, JsonObject query) {
         return search(type.readAlias(), type.type(), query);
     }
@@ -95,4 +92,10 @@ public interface EsAPIClient {
     JsonObject updateObject(String index, String type, String id, String parentId, String version, JsonObject object);
 
     void verbose(boolean on);
+
+    void restore(ElasticSearchIndex index, String file);
+
+    void backup(ElasticSearchIndex index, String file);
+
+    void migrateIndex(ElasticSearchIndex index);
 }

@@ -12,8 +12,11 @@ import com.github.jsonj.JsonElement;
 import com.github.jsonj.JsonObject;
 import com.github.jsonj.exceptions.JsonTypeMismatchException;
 import com.github.jsonj.tools.JsonParser;
+import com.google.common.collect.Iterables;
+import io.inbot.datemath.DateMath;
 import io.inbot.elasticsearch.bulkindexing.BulkIndexer;
 import io.inbot.elasticsearch.bulkindexing.BulkIndexingOperations;
+import io.inbot.elasticsearch.bulkindexing.LoggingStatusHandler;
 import io.inbot.elasticsearch.exceptions.EsBadRequestException;
 import io.inbot.elasticsearch.exceptions.EsNotFoundException;
 import io.inbot.elasticsearch.jsonclient.JsonJRestClient;
@@ -28,10 +31,12 @@ import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.http.client.ClientProtocolException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class HttpEsAPIClient implements EsAPIClient {
-
+    private static final Logger LOG = LoggerFactory.getLogger(HttpEsAPIClient.class);
     private final JsonParser parser;
     private final JsonJRestClient jsonJRestClient;
     private final int maxPageSize;
@@ -58,6 +63,137 @@ public class HttpEsAPIClient implements EsAPIClient {
         } catch (IOException e) {
             throw new IllegalStateException("ERROR "+e.getMessage(),e);
         }
+    }
+
+    @Override
+    public void backup(ElasticSearchIndex index, String file) {
+        backup(index.readAlias(), file);
+    }
+
+    public void migrateIndex(ElasticSearchIndex index) {
+        String alias = index.aliasPrefix();
+        String indexVersion = "_v" + index.version();
+        String mappingResource = index.mappingResource();
+
+        if(isIndexMigrationNeeded(index)) {
+            String newIndex = alias + indexVersion;
+            if(!aliasExists(alias) && indexExists(alias)) {
+                throw new IllegalStateException("an index already exists with the alias name " + alias);
+            }
+            if(!indexExists(newIndex)) {
+                createIndexMappingFromResource(newIndex, mappingResource, -1);
+            }
+            if(aliasExists(alias)) {
+                JsonArray currentIndices = indicesFor(alias);
+                if(currentIndices.size() > 1) {
+                    throw new IllegalArgumentException("cannot swap alias " + alias + " because it points to more than one index: " + currentIndices);
+                } else if(currentIndices.size() == 1) {
+                    if(!newIndex.equals(currentIndices.get(0).asString())) {
+
+                        long startTime = System.currentTimeMillis();
+
+                        // we need to reindex the old index into the new one in two steps
+                        String oldIndex = currentIndices.get(0).asString();
+                        boolean reindexSuccessfull = reindex(index, oldIndex, matchAll());
+                        // now we can switch over the alias
+                        JsonArray actions = array();
+
+                        if(currentIndices.size() == 1 && !newIndex.equals(currentIndices.get(0).asString())) {
+                            actions.add(object(field("remove", object(field("index", currentIndices.first()), field("alias", alias)))));
+                        }
+
+                        actions.add(object(field("add", object(field("index", newIndex), field("alias", alias)))));
+                        jsonJRestClient.post(UrlBuilder.url("/").append("_aliases").build(), object(field("actions", actions)))
+                                .orElseThrow(() -> new EsNotFoundException());
+
+                        // reindex any documents that were added since we began the migration
+                        JsonObject modifiedQuery = QueryBuilder.rangeQuery("updated_at", DateMath.formatIsoDate(startTime - 5000), true, null, true);
+                        reindexSuccessfull = reindexSuccessfull && reindex(index, oldIndex, modifiedQuery);
+
+                        // remove the old index
+                        if(reindexSuccessfull) {
+                            LOG.info("remove old index " + oldIndex);
+                            deleteIndex(oldIndex);
+                        } else {
+                            LOG.error("there was an issue reindexing " + oldIndex + ". Not removing it and you should check it.");
+                        }
+                    } else {
+                        LOG.warn("alias " + alias + " already points to " + newIndex);
+                    }
+                } else {
+                    LOG.warn("alias exists but does not have any indices");
+                }
+            } else {
+                LOG.info("alias does not exist " + alias + " create new index with alias");
+                if(indexExists(alias)) {
+                    throw new IllegalStateException("an index already exists with the alias name " + alias);
+                }
+                if(!indexExists(newIndex)) {
+                    createIndexMappingFromResource(newIndex, mappingResource, -1);
+                }
+                JsonArray actions = array();
+
+                actions.add(object(field("add", object(field("index", newIndex), field("alias", alias)))));
+                jsonJRestClient.post(UrlBuilder.url("/").append("_aliases").build(), object(field("actions", actions)))
+                        .orElseThrow(() -> new EsNotFoundException());
+            }
+        } else {
+            LOG.info("no migration needed for " + alias + " version " + index.version());
+        }
+    }
+
+    private boolean reindex(ElasticSearchIndex index, String oldIndex, JsonObject q) {
+        JsonObject query = queryWithVersion(q);
+        // uses multiple threads to minimize downtime
+        try(BulkIndexer bulkIndexer = bulkIndexer(index.indexName(), null, 1000, 9)) {
+            LoggingStatusHandler statusHandler = new LoggingStatusHandler(LOG);
+            bulkIndexer.setBulkIndexerStatusHandler(statusHandler);
+            query.put("fields", array("_source","_parent","_id","_type"));
+            for(JsonObject o: Iterables.concat(
+                    iterableSearch(oldIndex, null, query, 1000, 20, true),
+                    iterableSearch(oldIndex, ".percolator", query, 1000, 20, true)) // explicitly include percolator documents
+                    ) {
+                String parent = o.getString("fields","_parent");
+                JsonObject object = o.getObject("_source");
+                String type = o.getString("_type");
+                object.put("_type", type);
+                if(StringUtils.isNotEmpty(parent)) {
+                    bulkIndexer.index(object,parent);
+                } else {
+                    bulkIndexer.index(object);
+                }
+            }
+            if(!statusHandler.status().get("reindex_success", false)) {
+                LOG.error("there were problems re-indexing " + index.indexName() + ": " +statusHandler.status());
+                return false;
+            } else {
+                return true;
+            }
+        } catch (IOException e) {
+            // this is bad, we should NOT delete the old index until we fix it
+            LOG.error("SEVERE PROBLEM: can't reindex index " + oldIndex + " into " + index.indexName() + " because " + e.getMessage(), e);
+            throw new IllegalStateException("SEVERE PROBLEM: can't reindex index " + oldIndex + " into " + index.indexName() + " because " + e.getMessage(), e);
+        }
+    }
+
+
+    private boolean isIndexMigrationNeeded(ElasticSearchIndex index) {
+        String alias = index.readAlias();
+        if(!aliasExists(alias)) {
+            return true;
+        }
+        JsonArray indices = indicesFor(alias);
+        if(indices.size() > 1) {
+            throw new IllegalStateException("more than one index for alias " + alias);
+        }
+        if(indices.size() == 1) {
+            if(indices.first().asString().endsWith("_v"+index.version())) {
+                // the alias exists for a single index with the correct suffix
+                return false;
+            }
+        }
+        // if the alias does not exist, it will need to be created
+        return true;
     }
 
     private Supplier<EsNotFoundException> notFoundSupplier() {
@@ -97,7 +233,7 @@ public class HttpEsAPIClient implements EsAPIClient {
         try {
             JsonObject mapping = parser.parse(IOUtils.resource(resource)).asObject();
             JsonObject indexSettings = mapping.getOrCreateObject("settings","index");
-            if(!indexSettings.containsKey("number_of_replicas")) {
+            if(!indexSettings.containsKey("number_of_replicas") && defaultNumberOfReplicas >=0) {
                 indexSettings.put("number_of_replicas", defaultNumberOfReplicas);
             }
             return createIndexMapping(index, mapping);
@@ -414,6 +550,7 @@ public class HttpEsAPIClient implements EsAPIClient {
 
     @Override
     public void restore(String indexName, String file) {
+        // make sure the index exists with the right mapping before restoring
         try(BufferedReader br = IOUtils.gzipFileReader(file)) {
             try(BulkIndexingOperations indexer = bulkIndexer(indexName, null, 100, 1)) {
                 br.lines().forEach(line -> {
@@ -430,6 +567,12 @@ public class HttpEsAPIClient implements EsAPIClient {
             throw new IllegalStateException("ERROR "+e.getMessage(),e);
         }
     }
+
+    @Override
+    public void restore(ElasticSearchIndex index, String file) {
+        restore(index.writeAlias(),file);
+    }
+
     @Override
     public JsonObject search(String index, String type, JsonObject query) {
         String url = UrlBuilder.url("/")
