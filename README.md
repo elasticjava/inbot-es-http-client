@@ -1,5 +1,7 @@
 # Introduction
 
+Es-http-client is a java client library for interacting with Elasticsearch. 
+
 **Work in progress** I'm currently untangling code and tests related to this codebase from our internal codebase. This is an ongoing project. The short term goal is to present this stuff at the Elasticsearch meetup end of January 2016. Beware, API stability is not a goal until we hit 1.0. There will be changes.
 
 # Features
@@ -21,6 +23,7 @@ At Inbot we have been early adopters of Elasticsearch and we have used it for se
 - it complicates deployment since now all your backend servers need to have elasticsearch nodes embedded and it prevents proper isolation of these two things
 - most of the documentation assumes you use http
 - the performance benefits are there but not as dramatic as some would have you believe. This is the same reason that e.g. Logstash no longer ships with embeded elasticsearch as a default option. If you use http correctly, it is mostly the same amount of stuff going over the wire. Our library does the right thing by not needlessly buffering requests/responses, by pooling connections using httpclient, and by supporting gzip compression (if you set up http client to do this).
+- The Elasticsearch internal API is kind of complicated. We chose to keep things as simple as we could.
 
 So, we used HTTP to talk to Elasticsearch from day one and started out with some simple code around apache http client that over the years grew into a mini framework with loads of features. I always had the plan to open source this but never got around to cleaning it up. Recently the release of Elasticsearch 2.0 forced me to finally refactor the code and I took the opportunity to untangle it from our own code.
 
@@ -32,7 +35,6 @@ Facts:
 - It does not currently support the full ES API. We only implemented the bits we use. The good news is that this is easily addressed. We welcome pull requests for this.
 - Nobody else currently is using this because we just released it; so you'll have to take our word for all this ;-)
 - The API is not entirely stable yet. I may move things around as long as it is easy and convenient. At some point we'll slap on 1.0 but until then this is not a final API. 
-
 
 # Maven
 
