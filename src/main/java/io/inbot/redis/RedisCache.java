@@ -25,7 +25,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisException;
 
 /**
- * Simple cache that uses Redis.
+ * Simple json object cache that uses Redis.
  */
 public class RedisCache implements MetricSet {
     private final JedisPool jedisPool;
@@ -42,14 +42,20 @@ public class RedisCache implements MetricSet {
     /**
      * Object cache that uses redis.
      *
-     * Important: bulkindexing bypasses the cache and all keys will be stale after bulkindexing. Using clearAll may be expensive.
+     * Important: bulkindexing bypasses the cache and all keys will be stale after bulkindexing. Using clearAll may be
+     * expensive.
      *
      * @param jedisPool
+     *            the jedis pool
      * @param parser
+     *            the parser
      * @param keyPrefix
      *            use something short, stick with the convention i/g/v/yourkey so the prefix is i/g/v where v is the
      *            current version of the index. This way all the keys expire when we upgrade an index.
-     * @param expirationInSeconds keep this low to ensure any cache coherence issues go away in a reasonable time.
+     * @param version
+     *            version of the index
+     * @param expirationInSeconds
+     *            keep this low to ensure any cache coherence issues go away in a reasonable time.
      */
     public RedisCache(JedisPool jedisPool, JsonParser parser, String keyPrefix, int version, int expirationInSeconds) {
         this.jedisPool = jedisPool;
@@ -68,6 +74,7 @@ public class RedisCache implements MetricSet {
 
     @Override
     public Map<String, Metric> getMetrics() {
+        // these metrics are interesting to keep track of the effectiveness of the cache
         Map<String, Metric> metrics = new HashMap<>();
         String prefix = "redis."+keyPrefix.replace('/', '.');
         metrics.put(prefix+".get", getTimer);
