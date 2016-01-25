@@ -65,7 +65,7 @@ public class CrudOperationsIntegrationTest {
         ElasticSearchIndex index = ElasticSearchIndex.create(RandomHelper.randomIndexName(), 1, "mapping-v1.json");
         ElasticSearchType type = ElasticSearchType.create(index, "test");
 
-        CrudOperations dao = crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
+        CrudOperations dao = crudOperationsFactory.builder(type).dao();
 
         JsonObject event = randomObject();
         dao.create(event, false);
@@ -82,7 +82,7 @@ public class CrudOperationsIntegrationTest {
         ElasticSearchIndex index = ElasticSearchIndex.create(RandomHelper.randomIndexName(), 1, "mapping-v1.json");
         ElasticSearchType type = ElasticSearchType.create(index, "test");
 
-        CrudOperations dao = crudOperationsFactory.builder(type).enableRedisCache(false,10, "test").enableInMemoryCache(10000, 10).dao();
+        CrudOperations dao = crudOperationsFactory.builder(type).enableInMemoryCache(10000, 10).dao();
 
         GuavaCachingCrudDao cachingCrud = new GuavaCachingCrudDao(dao, 20, 20);
         String id = HashUtils.createId();
